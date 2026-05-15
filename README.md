@@ -204,25 +204,58 @@ ChainBrowser/
 
 ---
 
-## 🗺️ Roadmap & Contributing
+## 🎯 Contributing
 
-ChainBrowser is an community-driven project. We've defined a clear path to MVP:
+We welcome contributions from the community! 🎉
 
-- 🛤️ **[Full Roadmap](ROADMAP.md)**: See what we're building and where you can help.
-- 🤝 **[Contributing Guide](CONTRIBUTING.md)**: Our standards and workflow.
+Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
+- How to set up your development environment
+- Our code style and conventions
+- How to submit pull requests
+- Our development workflow
 
-### 🚀 Developer Quick Start: Adding a Module
+### Quick Start for Contributors
 
-Want to add a new tool to the Developer Suite or a new Explorer view? 
-
-1.  **Define the UI**: Create your component in `src/components/[module_name]/`.
-2.  **Add a Route**: Register your component in `src/App.tsx`.
-3.  **Update Navigation**: (If it's a top-level mode) Add it to `src/components/ui/Navigation.tsx`.
-4.  **Use the Store**: Connect your logic to `useAppStore()` for persistence and network state.
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Run tests: `npm test`
+5. Commit your changes: `git commit -m 'Add amazing feature'`
+6. Push to your fork: `git push origin feature/amazing-feature`
+7. Open a Pull Request
 
 ---
 
-## 🎯 Contributing
+## 🗺️ Roadmap
+
+### Phase 1: MVP (Current)
+- [x] Project scaffolding
+- [ ] Basic wallet creation and management
+- [ ] Stellar network connection
+- [ ] Simple transaction viewing
+- [ ] Extension popup UI
+
+### Phase 2: Core Features
+- [ ] Full wallet functionality (send/receive)
+- [ ] dApp connection and injection
+- [ ] Network switcher
+- [ ] Transaction history
+- [ ] Basic explorer features
+
+### Phase 3: Advanced Features
+- [ ] Soroban smart contract interaction
+- [ ] Developer tools panel
+- [ ] Multi-chain support
+- [ ] NFT gallery
+- [ ] Advanced security features
+
+### Phase 4: Ecosystem
+- [ ] Extension API for third-party dApps
+- [ ] Plugin system
+- [ ] Mobile support (future)
+- [ ] Full desktop browser (long-term)
+
+---
 
 ## 📜 License
 

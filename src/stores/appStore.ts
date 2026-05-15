@@ -25,31 +25,6 @@ interface AppState {
   setError: (error: string | null) => void;
 }
 
-// Custom storage for Chrome extension
-const chromeStorage = {
-  getItem: (name: string) => {
-    return new Promise<string | null>((resolve) => {
-      chrome.storage.local.get([name], (result) => {
-        resolve(result[name] ? JSON.stringify(result[name]) : null);
-      });
-    });
-  },
-  setItem: (name: string, value: string) => {
-    return new Promise<void>((resolve) => {
-      chrome.storage.local.set({ [name]: JSON.parse(value) }, () => {
-        resolve();
-      });
-    });
-  },
-  removeItem: (name: string) => {
-    return new Promise<void>((resolve) => {
-      chrome.storage.local.remove([name], () => {
-        resolve();
-      });
-    });
-  },
-};
-
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
@@ -88,8 +63,6 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'chainbrowser-storage',
-      // @ts-ignore - Chrome storage returns a promise which persist middleware handles
-      storage: chromeStorage,
       partialize: (state) => ({
         currentNetwork: state.currentNetwork,
         wallets: state.wallets,

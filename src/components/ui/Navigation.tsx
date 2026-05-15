@@ -1,33 +1,53 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Wallet, Search, Code, Settings } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Wallet, Compass, Terminal, Settings } from 'lucide-react';
 
 export const Navigation: React.FC = () => {
+  const location = useLocation();
+  
   const navItems = [
-    { to: '/', icon: Wallet, label: 'Wallet' },
-    { to: '/explorer', icon: Search, label: 'Explorer' },
-    { to: '/devtools', icon: Code, label: 'DevTools' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
+    { path: '/', icon: Wallet, label: 'Wallet' },
+    { path: '/explorer', icon: Compass, label: 'Explorer' },
+    { path: '/devtools', icon: Terminal, label: 'DevTools' },
+    { path: '/settings', icon: Settings, label: 'Settings' }
   ];
-
+  
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 px-4 py-2 flex justify-around items-center z-50">
-      {navItems.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          className={({ isActive }) =>
-            `flex flex-col items-center gap-1 transition-colors ${
-              isActive ? 'text-blue-500' : 'text-gray-400 hover:text-gray-200'
-            }`
-          }
-        >
-          <item.icon size={20} />
-          <span className="text-[10px] font-medium uppercase tracking-wider">
-            {item.label}
-          </span>
-        </NavLink>
-      ))}
+    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">CB</span>
+              </div>
+              <span className="text-xl font-bold text-gray-900 dark:text-white">
+                ChainBrowser
+              </span>
+            </Link>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            {navItems.map(({ path, icon: Icon, label }) => {
+              const isActive = location.pathname === path;
+              return (
+                <Link
+                  key={path}
+                  to={path}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </nav>
   );
 };
