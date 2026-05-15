@@ -39,3 +39,42 @@ Thumbs.db
 # Extension specific
 *.crx
 *.pem
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional dependency/build dirs
+jspm_packages/
+web_modules/
+build/Release
+
+# Tool caches
+*.lcov
+.nyc_output
+.npm
+.eslintcache
+.stylelintcache
+.cache
+.parcel-cache
+.vite/
+.pnpm-store
+
+# Package manager files
+*.tgz
+.yarn-integrity
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# TypeScript
+*.tsbuildinfo
