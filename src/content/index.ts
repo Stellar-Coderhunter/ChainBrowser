@@ -22,6 +22,7 @@ window.addEventListener('message', (event) => {
       // Send response back to the page
       window.postMessage({
         type: 'CHAINBROWSER_RESPONSE',
+        requestId: event.data.requestId,
         data: response
       }, '*');
     });
@@ -29,7 +30,7 @@ window.addEventListener('message', (event) => {
 });
 
 // Listen for messages from the background script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   console.log('Content script received from background:', message);
   
   // Forward to the page

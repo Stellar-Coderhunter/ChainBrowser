@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Network, NetworkType, Wallet } from '@/types';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import type { Network, Wallet } from '@/types';
 import { DEFAULT_NETWORKS } from '@/utils/network';
 
 interface AppState {
@@ -37,12 +37,25 @@ export const useAppStore = create<AppState>()(
       error: null,
       
       // Actions
-      setNetwork: (network) => set({ currentNetwork: network }),
+      setNetwork: (network) => set({ currentNetwork: network, error: null }),
       
-      addWallet: (wallet) => set((state) => ({
-        wallets: [...state.wallets, wallet],
-        activeWallet: state.activeWallet || wallet
-      })),
+      addWallet: (wallet) => set((state) => {
+        const duplicateWallet = state.wallets.some(
+          (existingWallet) =>
+            existingWallet.id === wallet.id ||
+            existingWallet.publicKey === wallet.publicKey
+        );
+
+        if (duplicateWallet) {
+          return { error: 'This wallet already exists in ChainBrowser.' };
+        }
+
+        return {
+          wallets: [...state.wallets, wallet],
+          activeWallet: state.activeWallet || wallet,
+          error: null
+        };
+      }),
       
       removeWallet: (walletId) => set((state) => {
         const newWallets = state.wallets.filter(w => w.id !== walletId);
@@ -51,11 +64,12 @@ export const useAppStore = create<AppState>()(
           : state.activeWallet;
         return {
           wallets: newWallets,
-          activeWallet: newActiveWallet
+          activeWallet: newActiveWallet,
+          error: null
         };
       }),
       
-      setActiveWallet: (wallet) => set({ activeWallet: wallet }),
+      setActiveWallet: (wallet) => set({ activeWallet: wallet, error: null }),
       
       setLoading: (loading) => set({ isLoading: loading }),
       
@@ -63,6 +77,22 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'chainbrowser-storage',
+      storage: createJSONStorage(() => localStorage),
+      merge: (persistedState, currentState) => {
+        const typedState = persistedState as Partial<AppState> | undefined;
+        const persistedNetwork = typedState?.currentNetwork;
+        const matchingNetwork = persistedNetwork
+          ? DEFAULT_NETWORKS.find((network) => network.id === persistedNetwork.id)
+          : undefined;
+
+        return {
+          ...currentState,
+          ...typedState,
+          currentNetwork: matchingNetwork || currentState.currentNetwork,
+          wallets: typedState?.wallets || currentState.wallets,
+          activeWallet: typedState?.activeWallet || currentState.activeWallet
+        };
+      },
       partialize: (state) => ({
         currentNetwork: state.currentNetwork,
         wallets: state.wallets,

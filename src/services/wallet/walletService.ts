@@ -1,8 +1,17 @@
 import * as StellarSdk from '@stellar/stellar-sdk';
-import { Wallet, NetworkType } from '@/types';
-import { DEFAULT_NETWORKS } from '@/utils/network';
+import type { Wallet, NetworkType } from '@/types';
 
 export class WalletService {
+  private static textEncoder = new TextEncoder();
+
+  private static encodeMessage(message: string): Buffer {
+    return this.textEncoder.encode(message) as unknown as Buffer;
+  }
+
+  private static decodeSignature(signature: string): Buffer {
+    return Uint8Array.from(atob(signature), (char) => char.charCodeAt(0)) as unknown as Buffer;
+  }
+
   /**
    * Generate a new wallet
    */
@@ -11,7 +20,7 @@ export class WalletService {
     
     return {
       id: crypto.randomUUID(),
-      name,
+      name: name.trim(),
       publicKey: keypair.publicKey(),
       network,
       createdAt: Date.now()
@@ -23,16 +32,16 @@ export class WalletService {
    */
   static importWallet(name: string, secretKey: string, network: NetworkType): Wallet {
     try {
-      const keypair = StellarSdk.Keypair.fromSecret(secretKey);
+      const keypair = StellarSdk.Keypair.fromSecret(secretKey.trim());
       
       return {
         id: crypto.randomUUID(),
-        name,
+        name: name.trim(),
         publicKey: keypair.publicKey(),
         network,
         createdAt: Date.now()
       };
-    } catch (error) {
+    } catch {
       throw new Error('Invalid secret key');
     }
   }
@@ -66,7 +75,7 @@ export class WalletService {
    */
   static signMessage(message: string, secretKey: string): string {
     const keypair = StellarSdk.Keypair.fromSecret(secretKey);
-    const messageBytes = Buffer.from(message);
+    const messageBytes = this.encodeMessage(message);
     const signature = keypair.sign(messageBytes);
     return signature.toString('base64');
   }
@@ -81,8 +90,8 @@ export class WalletService {
   ): boolean {
     try {
       const keypair = StellarSdk.Keypair.fromPublicKey(publicKey);
-      const messageBytes = Buffer.from(message);
-      const signatureBytes = Buffer.from(signature, 'base64');
+      const messageBytes = this.encodeMessage(message);
+      const signatureBytes = this.decodeSignature(signature);
       keypair.verify(messageBytes, signatureBytes);
       return true;
     } catch {
@@ -102,12 +111,18 @@ export class WalletService {
    */
   static importWalletFromJson(json: string): Wallet {
     try {
-      const wallet = JSON.parse(json);
-      if (!wallet.id || !wallet.publicKey || !wallet.network) {
+      const wallet = JSON.parse(json) as Partial<Wallet>;
+      if (
+        !wallet.id ||
+        !wallet.name ||
+        !wallet.publicKey ||
+        !wallet.network ||
+        typeof wallet.createdAt !== 'number'
+      ) {
         throw new Error('Invalid wallet format');
       }
       return wallet as Wallet;
-    } catch (error) {
+    } catch {
       throw new Error('Failed to import wallet from JSON');
     }
   }

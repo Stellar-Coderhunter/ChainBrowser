@@ -1,4 +1,4 @@
-import { Network, NetworkType } from '@/types';
+import type { Network, NetworkType } from '@/types';
 
 export const DEFAULT_NETWORKS: Network[] = [
   {

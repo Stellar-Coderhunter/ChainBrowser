@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppStore } from '@/stores/appStore';
+import type { Network } from '@/types';
 
 export const Settings: React.FC = () => {
   const { currentNetwork, availableNetworks, setNetwork } = useAppStore();
@@ -15,7 +16,7 @@ export const Settings: React.FC = () => {
           Network
         </h3>
         <div className="space-y-3">
-          {availableNetworks.map((network) => (
+          {availableNetworks.map((network: Network) => (
             <button
               key={network.id}
               onClick={() => setNetwork(network)}

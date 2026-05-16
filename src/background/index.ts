@@ -23,7 +23,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 // Handle messages from popup, content scripts, etc.
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   console.log('Background received message:', message);
   
   switch (message.type) {
@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       
     case 'SAVE_WALLET':
       chrome.storage.local.get(['wallets'], (result) => {
-        const wallets = result.wallets || [];
+        const wallets = Array.isArray(result.wallets) ? result.wallets : [];
         wallets.push(message.wallet);
         chrome.storage.local.set({ wallets }, () => {
           sendResponse({ success: true });
@@ -74,7 +74,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // Handle tab updates for dApp detection
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url) {
     // Check if the URL is a known dApp
     // This is where you would inject web3 provider for dApps
